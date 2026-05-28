@@ -1,0 +1,67 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const posts = await getCollection('journal', ({ data }) => {
+  return import.meta.env.PROD ? data.draft !== true : true;
+});
+// Trier par date décroissante
+posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+---
+
+<Layout title="Portfolio Journal">
+  <h1>📓 Mon journal technique</h1>
+  <p>Partage quotidien de mes travaux en contrôle-commande et automation.</p>
+  
+  <ul class="post-list">
+    {posts.map((post) => (
+      <li>
+        <a href={`/journal/${post.slug}`}>
+          <time datetime={post.data.date.toISOString()}>
+            {post.data.date.toLocaleDateString('fr-FR', { 
+              day: 'numeric', month: 'long', year: 'numeric' 
+            })}
+          </time>
+          <h3>{post.data.title}</h3>
+          {post.data.summary && <p>{post.data.summary}</p>}
+          {post.data.tags && (
+            <div class="tags">
+              {post.data.tags.map(tag => <span class="tag">#{tag}</span>)}
+            </div>
+          )}
+        </a>
+      </li>
+    ))}
+  </ul>
+</Layout>
+
+<style>
+  .post-list { list-style: none; padding: 0; }
+  .post-list li {
+    margin: 1.5rem 0;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .post-list a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+  .post-list a:hover h3 { color: var(--accent); }
+  time {
+    font-size: 0.9rem;
+    opacity: 0.7;
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+  h3 { margin: 0.3rem 0; font-size: 1.3rem; }
+  .tags { margin-top: 0.5rem; }
+  .tag {
+    display: inline-block;
+    background: var(--border);
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    margin-right: 0.4rem;
+  }
+</style>
