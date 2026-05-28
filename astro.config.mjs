@@ -11,7 +11,7 @@ export default defineConfig({
     },
   },
   image: {
-    domains: ["cloudinary.com"], // Si tu utilises Cloudinary plus tard
+    domains: ["app.netlify.com"], // Si tu utilises Cloudinary plus tard
     remotePatterns: [{ protocol: "https", hostname: "**" }],
   },
 });
